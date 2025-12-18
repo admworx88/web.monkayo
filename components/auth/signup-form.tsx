@@ -43,6 +43,8 @@ export function SignUpForm() {
     const result = await signUpWithPassword(formData);
     if (result?.error) {
       toast.error(result.error);
+    } else if (result?.success && result?.message) {
+      toast.success(result.message);
     }
   };
 

@@ -37,7 +37,7 @@ export async function signUpWithPassword(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -52,6 +52,20 @@ export async function signUpWithPassword(formData: FormData) {
     return { error: error.message };
   }
 
+  // Check if user was created successfully
+  if (!data.user) {
+    return { error: 'Failed to create user account' };
+  }
+
+  // If email confirmation is required, show success message
+  if (data.user && !data.session) {
+    return {
+      success: true,
+      message: 'Please check your email to confirm your account',
+    };
+  }
+
+  // Session established, redirect to dashboard
   revalidatePath('/', 'layout');
   redirect('/dashboard');
 }

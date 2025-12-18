@@ -1,25 +1,34 @@
-import { Hero } from '@/components/landing/hero';
-import { Partners } from '@/components/landing/partners';
-import { Benefits } from '@/components/landing/benefits';
-import { HowItWorks } from '@/components/landing/how-it-works';
-import { Pricing } from '@/components/landing/pricing';
-import { Testimonials } from '@/components/landing/testimonials';
-import { FAQ } from '@/components/landing/faq';
-import { CTASection } from '@/components/landing/cta-section';
-import { Footer } from '@/components/landing/footer';
+import {
+  getHeroSlides,
+  getVisionMission,
+  getHomepageNews,
+  getFAQs,
+  getPartnerLogos,
+} from '@/lib/actions/homepage';
 
-export default function Home() {
+import { HeroCarousel } from '@/components/homepage/hero-carousel';
+import { VisionMissionSection } from '@/components/homepage/vision-mission-section';
+import { NewsSection } from '@/components/homepage/news-section';
+import { FAQSection } from '@/components/homepage/faq-section';
+import { PartnersSection } from '@/components/homepage/partners-section';
+
+export default async function HomePage() {
+  // Fetch all homepage data in parallel
+  const [heroSlides, visionMission, news, faqs, logos] = await Promise.all([
+    getHeroSlides(),
+    getVisionMission(),
+    getHomepageNews(),
+    getFAQs(),
+    getPartnerLogos(),
+  ]);
+
   return (
     <>
-      <Hero />
-      <Partners />
-      <Benefits />
-      <HowItWorks />
-      <Pricing />
-      <Testimonials />
-      <FAQ />
-      <CTASection />
-      <Footer />
+      <HeroCarousel slides={heroSlides} />
+      <VisionMissionSection data={visionMission} />
+      <NewsSection items={news} />
+      <FAQSection items={faqs} />
+      <PartnersSection logos={logos} />
     </>
   );
 }

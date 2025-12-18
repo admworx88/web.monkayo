@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS public.users (
   email TEXT UNIQUE NOT NULL,
   avatar_url TEXT,
   role user_role NOT NULL DEFAULT 'staff',
+  is_active BOOLEAN DEFAULT true,
+  last_login_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

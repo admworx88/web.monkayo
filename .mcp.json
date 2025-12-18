@@ -3,12 +3,12 @@
     "shadcn": {
       "type": "stdio",
       "command": "npx",
-      "args": [
-        "-y",
-        "shadcn@latest",
-        "mcp"
-      ],
+      "args": ["-y", "shadcn@latest", "mcp"],
       "env": {}
+    },
+    "supabase": {
+      "type": "http",
+      "url": "http://127.0.0.1:54421/mcp"
     }
   }
 }

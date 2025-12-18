@@ -22,11 +22,33 @@
       "Skill(frontend-design:frontend-design)",
       "mcp__shadcn__get_add_command_for_items",
       "mcp__shadcn__get_item_examples_from_registries",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm run db:reset:*)",
+      "Bash(npm run db:stop:*)",
+      "Bash(npx supabase:*)",
+      "Bash(npx:*)",
+      "mcp__supabase__list_tables",
+      "Bash(npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(del \".next\\dev\\lock\")",
+      "Bash(rm:*)",
+      "mcp__ide__getDiagnostics",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(wc:*)",
+      "Bash(head:*)",
+      "Bash(ls:*)",
+      "Bash(yes:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(curl:*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "shadcn"
   ],
-  "enableAllProjectMcpServers": true
+  "enabledPlugins": {
+    "github@claude-plugins-official": true
+  }
 }
