@@ -165,14 +165,10 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
   });
 
   return (
-    <Sidebar
-      collapsible="icon"
-      className="border-r border-stone-200/80 bg-white"
-      {...props}
-    >
+    <Sidebar collapsible="icon" className=" bg-white" {...props}>
       <TooltipProvider delayDuration={0}>
         {/* Header with LGU Monkayo Branding */}
-        <SidebarHeader className="border-b border-stone-100 px-4 py-4 group-data-[collapsible=icon]:px-3">
+        <SidebarHeader className="border-b border-stone-100/20 px-4 py-4 group-data-[collapsible=icon]:px-2">
           <Link
             href="/dashboard"
             className="flex items-center gap-3 group group-data-[collapsible=icon]:justify-center"
@@ -194,10 +190,10 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
           </Link>
         </SidebarHeader>
 
-        <SidebarContent className="px-3 py-4">
+        <SidebarContent className="px-3 py-4 group-data-[collapsible=icon]:px-1">
           {/* Dashboard Link */}
           {dashboardItem && (
-            <SidebarGroup className="pb-2">
+            <SidebarGroup className="pb-2 group-data-[collapsible=icon]:p-0">
               <SidebarMenu>
                 <SidebarMenuItem>
                   <Tooltip>
@@ -231,8 +227,8 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
           )}
 
           {/* Content Management Section */}
-          <SidebarGroup className="pt-2">
-            <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-widest text-stone-400 px-3 mb-1">
+          <SidebarGroup className="pt-2 group-data-[collapsible=icon]:p-0">
+            <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-widest text-stone-400 px-5 mb-1 group-data-[collapsible=icon]:hidden">
               Content
             </SidebarGroupLabel>
             <SidebarMenu>
@@ -262,7 +258,7 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
                             >
                               <Icon className="h-[18px] w-[18px]" />
                               <span>{item.title}</span>
-                              <ChevronRight className="ml-auto h-4 w-4 text-stone-400 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                              <ChevronRight className="ml-auto h-4 w-4 text-stone-400 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
                             </SidebarMenuButton>
                           </TooltipTrigger>
                         </CollapsibleTrigger>
@@ -311,8 +307,8 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
 
           {/* System Section */}
           {filteredSystemItems.length > 0 && (
-            <SidebarGroup className="pt-4 mt-2 border-t border-stone-100">
-              <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-widest text-stone-400 px-3 mb-1">
+            <SidebarGroup className="pt-4 mt-2 border-t border-stone-100/30 group-data-[collapsible=icon]:mt-0 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:border-t-0">
+              <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-widest text-stone-400 px-3 mb-1 group-data-[collapsible=icon]:hidden">
                 System
               </SidebarGroupLabel>
               <SidebarMenu>
@@ -356,7 +352,7 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
         </SidebarContent>
 
         {/* Footer with User */}
-        <SidebarFooter className="border-t border-stone-100 p-3">
+        <SidebarFooter className="border-t border-stone-100/30 p-3">
           <NavUser user={user} />
         </SidebarFooter>
       </TooltipProvider>

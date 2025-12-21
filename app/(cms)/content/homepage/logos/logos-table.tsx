@@ -3,7 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2, Award, ExternalLink } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Award,
+  ExternalLink,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { DataTable } from "@/components/cms/data-table";
@@ -65,6 +71,7 @@ export function LogosTable({ logos }: LogosTableProps) {
               alt={row.original.name || "Logo"}
               fill
               className="object-contain p-1"
+              unoptimized
             />
           ) : (
             <Award className="h-6 w-6 text-stone-400" />

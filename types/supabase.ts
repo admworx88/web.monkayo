@@ -951,6 +951,7 @@ export type Database = {
           link_url: string | null
           name: string
           sort_order: number | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -960,6 +961,7 @@ export type Database = {
           link_url?: string | null
           name: string
           sort_order?: number | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -969,6 +971,7 @@ export type Database = {
           link_url?: string | null
           name?: string
           sort_order?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }

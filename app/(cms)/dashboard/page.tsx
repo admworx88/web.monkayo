@@ -98,7 +98,7 @@ export default async function DashboardPage() {
               />
             </div>
 
-            <div className="mt-6 pt-6 border-t border-stone-100">
+            <div className="mt-6 pt-6 border-t border-stone-100/30">
               <h4 className="text-sm font-medium text-stone-700 mb-4">
                 Documents by Category
               </h4>
@@ -128,12 +128,17 @@ export default async function DashboardPage() {
           </ContentCard>
 
           {/* Recent Activity */}
-          <ContentCard title="Recent Activity" description="Latest changes in the CMS">
+          <ContentCard
+            title="Recent Activity"
+            description="Latest changes in the CMS"
+          >
             <div className="space-y-4">
               {stats.recentActivity.length > 0 ? (
-                stats.recentActivity.slice(0, 6).map((activity) => (
-                  <ActivityItem key={activity.id} activity={activity} />
-                ))
+                stats.recentActivity
+                  .slice(0, 6)
+                  .map((activity) => (
+                    <ActivityItem key={activity.id} activity={activity} />
+                  ))
               ) : (
                 <div className="text-center py-8 text-stone-500">
                   <Activity className="h-8 w-8 mx-auto mb-2 text-stone-300" />
@@ -145,7 +150,10 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <ContentCard title="Quick Actions" description="Common tasks and shortcuts">
+        <ContentCard
+          title="Quick Actions"
+          description="Common tasks and shortcuts"
+        >
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <QuickAction
               title="Add Hero Slide"
@@ -195,9 +203,12 @@ function StatCard({
   color?: "amber" | "emerald" | "violet";
 }) {
   const colorClasses = {
-    amber: "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-500",
-    emerald: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-500",
-    violet: "bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-500",
+    amber:
+      "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-500",
+    emerald:
+      "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-500",
+    violet:
+      "bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-500",
   };
 
   return (
@@ -251,7 +262,9 @@ function QuickStatCard({
           <Icon className="h-5 w-5 text-stone-600 dark:text-stone-400" />
         </div>
         <div>
-          <p className="text-2xl font-bold text-stone-900 dark:text-stone-100 tabular-nums">{value}</p>
+          <p className="text-2xl font-bold text-stone-900 dark:text-stone-100 tabular-nums">
+            {value}
+          </p>
           <p className="text-xs text-stone-500 dark:text-stone-400">{title}</p>
         </div>
       </div>
@@ -272,7 +285,9 @@ function DocumentStat({
   return (
     <Link href={href}>
       <div className="flex items-center justify-between p-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
-        <span className="text-sm text-stone-600 dark:text-stone-400">{label}</span>
+        <span className="text-sm text-stone-600 dark:text-stone-400">
+          {label}
+        </span>
         <span className="text-sm font-semibold text-stone-900 dark:text-stone-100 tabular-nums">
           {count}
         </span>
@@ -294,8 +309,10 @@ function ActivityItem({
   };
 }) {
   const actionColors: Record<string, string> = {
-    INSERT: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-    UPDATE: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
+    INSERT:
+      "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
+    UPDATE:
+      "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
     DELETE: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
   };
 
@@ -319,7 +336,8 @@ function ActivityItem({
       <div
         className={cn(
           "flex-shrink-0 px-2 py-0.5 rounded text-[10px] font-medium uppercase",
-          actionColors[activity.action] || "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300"
+          actionColors[activity.action] ||
+            "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300"
         )}
       >
         {activity.action}
@@ -331,7 +349,7 @@ function ActivityItem({
         <div className="flex items-center gap-2 mt-0.5">
           <Clock className="h-3 w-3 text-stone-400 dark:text-stone-500" />
           <span className="text-xs text-stone-500 dark:text-stone-400">
-            {activity.created_at ? formatDate(activity.created_at) : 'N/A'}
+            {activity.created_at ? formatDate(activity.created_at) : "N/A"}
           </span>
         </div>
       </div>
@@ -358,8 +376,12 @@ function QuickAction({
           <Icon className="h-5 w-5 text-stone-600 dark:text-stone-400 group-hover:text-white transition-colors" />
         </div>
         <div className="min-w-0">
-          <p className="font-medium text-stone-900 dark:text-stone-100 text-sm">{title}</p>
-          <p className="text-xs text-stone-500 dark:text-stone-400">{description}</p>
+          <p className="font-medium text-stone-900 dark:text-stone-100 text-sm">
+            {title}
+          </p>
+          <p className="text-xs text-stone-500 dark:text-stone-400">
+            {description}
+          </p>
         </div>
       </div>
     </Link>

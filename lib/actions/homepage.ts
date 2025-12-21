@@ -541,6 +541,67 @@ export async function getAllPartnerLogos(): Promise<LogoSection[]> {
 }
 
 /**
+ * Upload partner logo image to storage
+ */
+export async function uploadPartnerLogoImage(
+  formData: FormData
+): Promise<{ success: boolean; publicUrl?: string; error?: string }> {
+  try {
+    const file = formData.get('file') as File;
+
+    if (!file) {
+      return { success: false, error: 'No file provided' };
+    }
+
+    // Upload to logos bucket in partner-logos folder
+    const result = await uploadToStorage(file, 'logos', 'partner-logos');
+
+    if (!result.success) {
+      return { success: false, error: result.error };
+    }
+
+    return {
+      success: true,
+      publicUrl: result.publicUrl,
+    };
+  } catch (error) {
+    console.error('Error uploading partner logo image:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to upload image',
+    };
+  }
+}
+
+/**
+ * Delete partner logo image from storage
+ */
+export async function deletePartnerLogoImage(
+  imageUrl: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Extract path from URL
+    const path = await extractStoragePath(imageUrl);
+
+    if (!path) {
+      // If it's not a storage URL, just return success (external URL)
+      return { success: true };
+    }
+
+    // Delete from storage
+    const result = await deleteFromStorage('logos', path);
+
+    return result;
+  } catch (error) {
+    console.error('Error deleting partner logo image:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Delete failed',
+    };
+  }
+}
+
+/**
  * Create partner logo
  */
 export async function createPartnerLogo(

@@ -4,13 +4,16 @@ import {
   getHomepageNews,
   getFAQs,
   getPartnerLogos,
-} from '@/lib/actions/homepage';
+} from "@/lib/actions/homepage";
 
-import { HeroCarousel } from '@/components/homepage/hero-carousel';
-import { VisionMissionSection } from '@/components/homepage/vision-mission-section';
-import { NewsSection } from '@/components/homepage/news-section';
-import { FAQSection } from '@/components/homepage/faq-section';
-import { PartnersSection } from '@/components/homepage/partners-section';
+import { PublicLayout } from "@/components/layout/public-layout";
+import { MinimalHero } from "@/components/homepage/minimal-hero";
+import { QuickServices } from "@/components/homepage/quick-services";
+import { ModernNewsSection } from "@/components/homepage/modern-news-section";
+import { MinimalVisionMission } from "@/components/homepage/minimal-vision-mission";
+import { MinimalFAQ } from "@/components/homepage/minimal-faq";
+import { MinimalPartners } from "@/components/homepage/minimal-partners";
+import { MinimalStats } from "@/components/homepage/minimal-stats";
 
 export default async function HomePage() {
   // Fetch all homepage data in parallel
@@ -23,12 +26,14 @@ export default async function HomePage() {
   ]);
 
   return (
-    <>
-      <HeroCarousel slides={heroSlides} />
-      <VisionMissionSection data={visionMission} />
-      <NewsSection items={news} />
-      <FAQSection items={faqs} />
-      <PartnersSection logos={logos} />
-    </>
+    <PublicLayout>
+      <MinimalHero slides={heroSlides} />
+      <MinimalPartners logos={logos} />
+      <MinimalVisionMission data={visionMission} />
+      <ModernNewsSection items={news} />
+      <QuickServices />
+      <MinimalStats />
+      <MinimalFAQ items={faqs} />
+    </PublicLayout>
   );
 }

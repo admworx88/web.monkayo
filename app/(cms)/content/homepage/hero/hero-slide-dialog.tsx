@@ -14,6 +14,7 @@ import {
   createHeroSlide,
   updateHeroSlide,
   uploadHeroSlideImage,
+  deleteHeroSlideImage,
 } from "@/lib/actions/homepage";
 import type { Database } from "@/types/supabase";
 
@@ -48,6 +49,12 @@ export function HeroSlideDialog({
     formData.append("file", file);
 
     const result = await uploadHeroSlideImage(formData);
+    return result;
+  };
+
+  // Handle image delete
+  const handleImageDelete = async (url: string) => {
+    const result = await deleteHeroSlideImage(url);
     return result;
   };
 
@@ -121,6 +128,7 @@ export function HeroSlideDialog({
                 value={formData.image_url}
                 onChange={(url) => setFormData({ ...formData, image_url: url })}
                 onUpload={handleImageUpload}
+                onDelete={handleImageDelete}
                 aspectRatio="video"
                 maxSizeMB={10}
                 allowUrl={true}

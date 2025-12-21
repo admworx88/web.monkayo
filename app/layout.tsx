@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import { getBrandingSettings } from "@/lib/actions/branding";
 import "./globals.css";
 
 const raleway = Raleway({
@@ -12,23 +13,28 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: "SaaS Platform - Modern Content Management System",
-  description: "A powerful SaaS platform with role-based access control and comprehensive content management features.",
+  title: "LGU Monkayo - Official Website",
+  description: "Official website of the Local Government Unit of Monkayo, Davao de Oro. Access e-services, news, transparency reports, and more.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const branding = await getBrandingSettings();
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href={branding.logos.favicon || "/favicon.ico"} />
+      </head>
       <body
         className={`${raleway.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

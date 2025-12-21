@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/actions/admin";
 import { getAllSettings } from "@/lib/actions/system";
+import { getBrandingSettings } from "@/lib/actions/branding";
 import { PageHeader } from "@/components/cms/page-header";
 import { ContentCard } from "@/components/cms/content-card";
 import { SettingsForm } from "./settings-form";
@@ -16,7 +17,10 @@ export default async function SettingsPage() {
     redirect("/dashboard");
   }
 
-  const settings = await getAllSettings();
+  const [settings, branding] = await Promise.all([
+    getAllSettings(),
+    getBrandingSettings(),
+  ]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -31,7 +35,7 @@ export default async function SettingsPage() {
 
       <main className="flex-1 p-4 lg:p-6 space-y-6">
         <ContentCard title="General Settings" description="Basic site information">
-          <SettingsForm settings={settings} />
+          <SettingsForm settings={settings} branding={branding} />
         </ContentCard>
       </main>
     </div>

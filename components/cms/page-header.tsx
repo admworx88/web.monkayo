@@ -54,9 +54,12 @@ export function PageHeader({
       )}
     >
       {/* Top bar with sidebar trigger and breadcrumbs */}
-      <div className="flex h-14 items-center gap-3 px-6 lg:px-8">
+      <div className="flex h-14 items-center gap-3 px-6">
         <SidebarTrigger className="text-stone-500 hover:text-stone-900 hover:bg-stone-100 dark:text-stone-400 dark:hover:text-stone-100 dark:hover:bg-stone-800" />
-        <Separator orientation="vertical" className="h-5 bg-stone-200 dark:bg-stone-700" />
+        <Separator
+          orientation="vertical"
+          className="h-5 bg-stone-200 dark:bg-stone-700"
+        />
 
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-1 text-sm flex-1">
@@ -73,7 +76,9 @@ export function PageHeader({
                   {crumb.label}
                 </Link>
               ) : (
-                <span className="text-stone-900 dark:text-stone-100 font-medium">{crumb.label}</span>
+                <span className="text-stone-900 dark:text-stone-100 font-medium">
+                  {crumb.label}
+                </span>
               )}
             </div>
           ))}
@@ -91,11 +96,15 @@ export function PageHeader({
               {title}
             </h1>
             {description && (
-              <p className="text-sm text-stone-500 dark:text-stone-400 mt-0.5">{description}</p>
+              <p className="text-sm text-stone-500 dark:text-stone-400 mt-0.5">
+                {description}
+              </p>
             )}
           </div>
           {actions && (
-            <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {actions}
+            </div>
           )}
         </div>
       </div>

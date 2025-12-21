@@ -5,21 +5,26 @@ import { Image as ImageIcon, Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface ImageUploadProps {
-  value?: string;  // Current image URL
-  onChange: (url: string) => void;  // Callback when image changes
-  onUpload: (file: File) => Promise<{ success: boolean; publicUrl?: string; error?: string }>;
+  value?: string; // Current image URL
+  onChange: (url: string) => void; // Callback when image changes
+  onUpload: (
+    file: File
+  ) => Promise<{ success: boolean; publicUrl?: string; error?: string }>;
+  onDelete?: (url: string) => Promise<{ success: boolean; error?: string }>; // Optional delete callback
   disabled?: boolean;
-  aspectRatio?: "video" | "square" | "portrait";  // For different layouts
+  aspectRatio?: "video" | "square" | "portrait"; // For different layouts
   maxSizeMB?: number;
-  allowUrl?: boolean;  // Allow manual URL input
+  allowUrl?: boolean; // Allow manual URL input
 }
 
 export function ImageUpload({
   value,
   onChange,
   onUpload,
+  onDelete,
   disabled = false,
   aspectRatio = "video",
   maxSizeMB = 10,
@@ -27,6 +32,7 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showUrlInput, setShowUrlInput] = useState(false);
@@ -42,9 +48,15 @@ export function ImageUpload({
   // Validate file client-side
   const validateFile = (file: File): string | null => {
     // Check file type
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+    const allowedTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp",
+      "image/gif",
+    ];
     if (!allowedTypes.includes(file.type)) {
-      return 'Invalid file type. Please upload PNG, JPEG, WebP, or GIF.';
+      return "Invalid file type. Please upload PNG, JPEG, WebP, or GIF.";
     }
 
     // Check file size
@@ -72,7 +84,7 @@ export function ImageUpload({
 
     // Simulate progress (real progress tracking requires different approach)
     const progressInterval = setInterval(() => {
-      setUploadProgress(prev => Math.min(prev + 10, 90));
+      setUploadProgress((prev) => Math.min(prev + 10, 90));
     }, 200);
 
     try {
@@ -87,12 +99,12 @@ export function ImageUpload({
           setUploadProgress(0);
         }, 500);
       } else {
-        setError(result.error || 'Upload failed');
+        setError(result.error || "Upload failed");
         setUploadProgress(0);
       }
     } catch (err) {
       clearInterval(progressInterval);
-      setError(err instanceof Error ? err.message : 'Upload failed');
+      setError(err instanceof Error ? err.message : "Upload failed");
       setUploadProgress(0);
     } finally {
       setIsUploading(false);
@@ -140,7 +152,32 @@ export function ImageUpload({
   };
 
   // Remove image
-  const handleRemove = () => {
+  const handleRemove = async () => {
+    if (!value) return;
+
+    // If onDelete handler is provided, call it to delete from storage
+    if (onDelete) {
+      setIsDeleting(true);
+      setError(null);
+
+      try {
+        const result = await onDelete(value);
+
+        if (!result.success) {
+          setError(result.error || "Failed to delete image");
+          setIsDeleting(false);
+          return;
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to delete image");
+        setIsDeleting(false);
+        return;
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+
+    // Clear the UI state
     onChange("");
     setError(null);
     if (fileInputRef.current) {
@@ -158,18 +195,24 @@ export function ImageUpload({
         className={cn(
           "relative rounded-lg overflow-hidden bg-stone-50 dark:bg-stone-900 ring-1 ring-stone-200 dark:ring-stone-800 transition-all",
           aspectClasses[aspectRatio],
-          isDragging && "ring-2 ring-amber-500 dark:ring-amber-500 bg-amber-50 dark:bg-amber-950",
+          isDragging &&
+            "ring-2 ring-amber-500 dark:ring-amber-500 bg-amber-50 dark:bg-amber-950",
           disabled && "opacity-60 cursor-not-allowed"
         )}
       >
         {value ? (
           // Image Preview
           <>
-            <img
-              src={value}
-              alt="Preview"
-              className="h-full w-full object-cover"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={value}
+                alt="Preview"
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 500px"
+                unoptimized
+              />
+            </div>
             {!disabled && (
               <div className="absolute top-2 right-2 flex gap-2">
                 <Button
@@ -177,9 +220,14 @@ export function ImageUpload({
                   size="sm"
                   variant="destructive"
                   onClick={handleRemove}
+                  disabled={isDeleting}
                   className="h-8 w-8 p-0"
                 >
-                  <X className="h-4 w-4" />
+                  {isDeleting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <X className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             )}
@@ -190,7 +238,9 @@ export function ImageUpload({
             {isUploading ? (
               <>
                 <Loader2 className="h-10 w-10 text-amber-500 dark:text-amber-400 animate-spin mb-3" />
-                <p className="text-sm font-medium text-stone-700 dark:text-stone-300">Uploading...</p>
+                <p className="text-sm font-medium text-stone-700 dark:text-stone-300">
+                  Uploading...
+                </p>
                 <Progress value={uploadProgress} className="w-48 mt-2" />
               </>
             ) : (

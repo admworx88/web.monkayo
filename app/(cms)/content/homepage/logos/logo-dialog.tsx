@@ -3,13 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Award } from "lucide-react";
 
 import { FormDialog } from "@/components/cms/form-dialog";
+import { ImageUpload } from "@/components/cms/image-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { createPartnerLogo, updatePartnerLogo } from "@/lib/actions/homepage";
+import {
+  createPartnerLogo,
+  updatePartnerLogo,
+  uploadPartnerLogoImage,
+  deletePartnerLogoImage,
+} from "@/lib/actions/homepage";
 import type { Database } from "@/types/supabase";
 
 type LogoSection = Database["public"]["Tables"]["logo_section"]["Row"];
@@ -32,9 +37,29 @@ export function LogoDialog({ children, mode, logo }: LogoDialogProps) {
     is_active: logo?.is_active ?? true,
   });
 
+  // Handle image upload
+  const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const result = await uploadPartnerLogoImage(formData);
+    return result;
+  };
+
+  // Handle image delete
+  const handleImageDelete = async (url: string) => {
+    const result = await deletePartnerLogoImage(url);
+    return result;
+  };
+
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
       toast.error("Partner name is required");
+      return;
+    }
+
+    if (!formData.image_url) {
+      toast.error("Please provide a logo image");
       return;
     }
 
@@ -86,75 +111,81 @@ export function LogoDialog({ children, mode, logo }: LogoDialogProps) {
         onSubmit={handleSubmit}
         submitLabel={mode === "create" ? "Add Logo" : "Save Changes"}
         isSubmitting={isSubmitting}
-        size="md"
+        size="lg"
       >
-        <div className="space-y-5">
-          {/* Preview */}
-          <div>
-            <Label className="text-stone-700">Logo Preview</Label>
-            <div className="mt-2 flex items-start gap-4">
-              <div className="relative h-20 w-32 rounded-lg overflow-hidden bg-stone-100 ring-1 ring-stone-200 flex items-center justify-center flex-shrink-0">
-                {formData.image_url ? (
-                  <img
-                    src={formData.image_url}
-                    alt="Preview"
-                    className="h-full w-full object-contain p-2"
-                  />
-                ) : (
-                  <Award className="h-8 w-8 text-stone-400" />
-                )}
-              </div>
-              <div className="flex-1 space-y-2">
-                <Input
-                  placeholder="https://example.com/logo.png"
-                  value={formData.image_url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, image_url: e.target.value })
-                  }
-                />
-                <p className="text-xs text-stone-500">
-                  Enter a logo image URL. PNG with transparent background recommended.
-                </p>
-              </div>
+        {/* 2-Column Layout: Image Left, Form Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-2">
+          {/* Left Column - Image Upload */}
+          <div className="space-y-3">
+            <Label className="text-stone-700 dark:text-stone-300 mb-2 block text-base">
+              Logo Image *
+            </Label>
+            <div className="w-72 h-72 mx-auto">
+              <ImageUpload
+                value={formData.image_url}
+                onChange={(url) => setFormData({ ...formData, image_url: url })}
+                onUpload={handleImageUpload}
+                onDelete={handleImageDelete}
+                aspectRatio="square"
+                maxSizeMB={5}
+                allowUrl={true}
+              />
             </div>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-15 text-center">
+              Recommended: PNG with transparent background, 200x200px or
+              500x500px
+            </p>
           </div>
 
-          {/* Name */}
-          <div>
-            <Label htmlFor="name" className="text-stone-700">
-              Partner Name <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="name"
-              placeholder="e.g., Department of Interior and Local Government"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="mt-1.5"
-            />
-          </div>
+          {/* Right Column - Form Fields */}
+          <div className="space-y-5">
+            {/* Partner Name */}
+            <div>
+              <Label
+                htmlFor="name"
+                className="text-stone-700 dark:text-stone-300"
+              >
+                Partner Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="name"
+                placeholder="e.g., Department of Interior and Local Government"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="mt-1.5"
+              />
+            </div>
 
-          {/* Link URL */}
-          <div>
-            <Label htmlFor="link_url" className="text-stone-700">
-              Website Link (optional)
-            </Label>
-            <Input
-              id="link_url"
-              placeholder="https://example.gov.ph"
-              value={formData.link_url}
-              onChange={(e) =>
-                setFormData({ ...formData, link_url: e.target.value })
-              }
-              className="mt-1.5"
-            />
-          </div>
+            {/* Website Link */}
+            <div>
+              <Label
+                htmlFor="link_url"
+                className="text-stone-700 dark:text-stone-300"
+              >
+                Website Link (optional)
+              </Label>
+              <Input
+                id="link_url"
+                placeholder="https://example.gov.ph"
+                value={formData.link_url}
+                onChange={(e) =>
+                  setFormData({ ...formData, link_url: e.target.value })
+                }
+                className="mt-1.5"
+              />
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                Users will be redirected here when clicking the logo
+              </p>
+            </div>
 
-          {/* Sort Order and Status */}
-          <div className="flex items-center gap-6">
-            <div className="w-32">
-              <Label htmlFor="sort_order" className="text-stone-700">
+            {/* Sort Order */}
+            <div>
+              <Label
+                htmlFor="sort_order"
+                className="text-stone-700 dark:text-stone-300"
+              >
                 Sort Order
               </Label>
               <Input
@@ -168,15 +199,19 @@ export function LogoDialog({ children, mode, logo }: LogoDialogProps) {
                     sort_order: parseInt(e.target.value) || 0,
                   })
                 }
-                className="mt-1.5"
+                className="mt-1.5 w-32"
               />
             </div>
-            <div className="flex-1">
+
+            {/* Active Status */}
+            <div>
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="text-stone-700">Active Status</Label>
-                  <p className="text-xs text-stone-500 mt-0.5">
-                    Show on the homepage
+                  <Label className="text-stone-700 dark:text-stone-300">
+                    Active Status
+                  </Label>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                    Show this logo on the homepage
                   </p>
                 </div>
                 <Switch

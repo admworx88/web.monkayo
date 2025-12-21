@@ -58,11 +58,11 @@ export function FAQsTable({ faqs }: FAQsTableProps) {
       header: "Question",
       cell: ({ row }) => (
         <div className="flex items-start gap-3 min-w-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50 text-[amber-600] flex-shrink-0">
-            <HelpCircle className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg dark:bg-amber-50 bg-amber-100 text-[amber-600] shrink-0">
+            <HelpCircle className="h-4 w-4 dark:text-stone-800 text-stone-500" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-medium text-stone-900 truncate">
+            <p className="font-medium dark:text-stone-200 text-stone-800 truncate">
               {row.original.question}
             </p>
             <p className="text-sm text-stone-500 line-clamp-1 mt-0.5">

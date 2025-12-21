@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from "next/image";
 
 interface Partner {
   id: string;
@@ -18,7 +18,7 @@ export function PartnersSection({ logos }: PartnersSectionProps) {
   }
 
   return (
-    <section className="py-16 md:py-20 bg-white border-t border-gray-200">
+    <section className="py-16 md:py-20 bg-white border-t border-gray-200 ">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -40,6 +40,8 @@ export function PartnersSection({ logos }: PartnersSectionProps) {
                   alt={partner.name}
                   fill
                   className="object-contain"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 200px"
+                  unoptimized
                 />
               </div>
             );

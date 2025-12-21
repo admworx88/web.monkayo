@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Save, Settings as SettingsIcon } from "lucide-react";
+import { Save, Settings as SettingsIcon, Palette, X, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,15 +12,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { updateSetting, upsertSetting } from "@/lib/actions/system";
+import { updateBrandingColors, updateBrandingLogos, uploadBrandingLogo, deleteBrandingLogo } from "@/lib/actions/branding";
+import { ImageUpload } from "@/components/cms/image-upload";
 import type { Database } from "@/types/supabase";
+import type { BrandingSettings } from "@/types/branding";
 
 type Setting = Database["public"]["Tables"]["site_settings"]["Row"];
 
 interface SettingsFormProps {
   settings: Setting[];
+  branding: BrandingSettings;
 }
 
-export function SettingsForm({ settings }: SettingsFormProps) {
+export function SettingsForm({ settings, branding }: SettingsFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,6 +46,99 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     youtube_url: (settingsObj.youtube_url || "") as string,
     office_hours: (settingsObj.office_hours || "") as string,
   });
+
+  // Branding state
+  const [brandingColors, setBrandingColors] = useState(branding.colors);
+  const [brandingLogos, setBrandingLogos] = useState(branding.logos);
+
+  // Track saved colors and unsaved changes
+  const [savedColors, setSavedColors] = useState(branding.colors);
+  const [unsavedChanges, setUnsavedChanges] = useState<Set<keyof typeof brandingColors>>(new Set());
+
+  // Handle branding color changes (no auto-save)
+  const handleColorChange = (colorKey: keyof typeof brandingColors, value: string) => {
+    // Update working state only (no save)
+    setBrandingColors({ ...brandingColors, [colorKey]: value });
+
+    // Mark as unsaved if different from saved value
+    const hasChanged = value !== savedColors[colorKey];
+    setUnsavedChanges(prev => {
+      const next = new Set(prev);
+      hasChanged ? next.add(colorKey) : next.delete(colorKey);
+      return next;
+    });
+  };
+
+  // Handle saving a specific color (Check icon)
+  const handleColorSave = async (colorKey: keyof typeof brandingColors) => {
+    // Save only this specific color (merge with saved state)
+    const colorsToSave = {
+      ...savedColors,  // Keep all saved colors
+      [colorKey]: brandingColors[colorKey]  // Override only this color
+    };
+
+    const result = await updateBrandingColors(colorsToSave);
+    if (result.success) {
+      // Update saved reference for this specific color only
+      setSavedColors(colorsToSave);
+      // Remove from unsaved changes
+      setUnsavedChanges(prev => {
+        const next = new Set(prev);
+        next.delete(colorKey);
+        return next;
+      });
+      toast.success(`${colorKey} color saved`);
+      router.refresh();
+    } else {
+      toast.error(`Failed to save ${colorKey} color`);
+    }
+  };
+
+  // Handle reverting a specific color (X icon)
+  const handleColorRevert = (colorKey: keyof typeof brandingColors) => {
+    // Revert to last saved value
+    setBrandingColors({ ...brandingColors, [colorKey]: savedColors[colorKey] });
+    // Remove from unsaved changes
+    setUnsavedChanges(prev => {
+      const next = new Set(prev);
+      next.delete(colorKey);
+      return next;
+    });
+  };
+
+  // Handle logo upload
+  const handleLogoUpload = async (logoType: keyof typeof brandingLogos, publicUrl: string) => {
+    setBrandingLogos({ ...brandingLogos, [logoType]: publicUrl });
+    toast.success(`${logoType} logo updated`);
+    router.refresh();
+  };
+
+  // Handle logo deletion
+  const handleLogoDelete = async (logoType: keyof typeof brandingLogos) => {
+    const logoUrl = brandingLogos[logoType];
+    if (!logoUrl) return;
+
+    const result = await deleteBrandingLogo(logoUrl, logoType);
+    if (result.success) {
+      setBrandingLogos({ ...brandingLogos, [logoType]: null });
+      toast.success(`${logoType} logo removed`);
+      router.refresh();
+    } else {
+      toast.error(`Failed to remove ${logoType} logo`);
+    }
+  };
+
+  // Handle logo URL input
+  const handleLogoUrlChange = async (logoType: keyof typeof brandingLogos, url: string) => {
+    const result = await updateBrandingLogos({ [logoType]: url || null });
+    if (result.success) {
+      setBrandingLogos({ ...brandingLogos, [logoType]: url || null });
+      toast.success(`${logoType} logo URL updated`);
+      router.refresh();
+    } else {
+      toast.error(`Failed to update ${logoType} logo URL`);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,6 +307,294 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               onChange={(e) => setFormData({ ...formData, youtube_url: e.target.value })}
               placeholder="https://youtube.com/@LGUMonkayo"
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Branding & Colors Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="h-5 w-5" />
+            Branding & Colors
+          </CardTitle>
+          <CardDescription>
+            Customize the public website theme colors and logos (does not affect CMS dashboard)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Theme Colors */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium">Theme Colors</h3>
+            <p className="text-xs text-muted-foreground">
+              Colors are applied automatically. Changes affect the public website only.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="color_primary">Primary Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="color_primary"
+                    type="color"
+                    value={brandingColors.primary}
+                    onChange={(e) => handleColorChange('primary', e.target.value)}
+                    className="w-20 h-10 p-1 cursor-pointer"
+                  />
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      value={brandingColors.primary}
+                      onChange={(e) => handleColorChange('primary', e.target.value)}
+                      placeholder="#d97706"
+                      className={unsavedChanges.has('primary') ? "pr-16" : ""}
+                    />
+                    {unsavedChanges.has('primary') && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleColorRevert('primary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Revert changes"
+                        >
+                          <X className="h-4 w-4 text-red-500 hover:text-red-700" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleColorSave('primary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Save changes"
+                        >
+                          <Check className="h-4 w-4 text-green-500 hover:text-green-700" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="color_secondary">Secondary Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="color_secondary"
+                    type="color"
+                    value={brandingColors.secondary}
+                    onChange={(e) => handleColorChange('secondary', e.target.value)}
+                    className="w-20 h-10 p-1 cursor-pointer"
+                  />
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      value={brandingColors.secondary}
+                      onChange={(e) => handleColorChange('secondary', e.target.value)}
+                      placeholder="#0ea5e9"
+                      className={unsavedChanges.has('secondary') ? "pr-16" : ""}
+                    />
+                    {unsavedChanges.has('secondary') && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleColorRevert('secondary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Revert changes"
+                        >
+                          <X className="h-4 w-4 text-red-500 hover:text-red-700" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleColorSave('secondary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Save changes"
+                        >
+                          <Check className="h-4 w-4 text-green-500 hover:text-green-700" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="color_accent">Accent Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="color_accent"
+                    type="color"
+                    value={brandingColors.accent}
+                    onChange={(e) => handleColorChange('accent', e.target.value)}
+                    className="w-20 h-10 p-1 cursor-pointer"
+                  />
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      value={brandingColors.accent}
+                      onChange={(e) => handleColorChange('accent', e.target.value)}
+                      placeholder="#fcd116"
+                      className={unsavedChanges.has('accent') ? "pr-16" : ""}
+                    />
+                    {unsavedChanges.has('accent') && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleColorRevert('accent')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Revert changes"
+                        >
+                          <X className="h-4 w-4 text-red-500 hover:text-red-700" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleColorSave('accent')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Save changes"
+                        >
+                          <Check className="h-4 w-4 text-green-500 hover:text-green-700" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="color_text_primary">Primary Text Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="color_text_primary"
+                    type="color"
+                    value={brandingColors.textPrimary}
+                    onChange={(e) => handleColorChange('textPrimary', e.target.value)}
+                    className="w-20 h-10 p-1 cursor-pointer"
+                  />
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      value={brandingColors.textPrimary}
+                      onChange={(e) => handleColorChange('textPrimary', e.target.value)}
+                      placeholder="#1f2937"
+                      className={unsavedChanges.has('textPrimary') ? "pr-16" : ""}
+                    />
+                    {unsavedChanges.has('textPrimary') && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleColorRevert('textPrimary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Revert changes"
+                        >
+                          <X className="h-4 w-4 text-red-500 hover:text-red-700" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleColorSave('textPrimary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Save changes"
+                        >
+                          <Check className="h-4 w-4 text-green-500 hover:text-green-700" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="color_text_secondary">Secondary Text Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="color_text_secondary"
+                    type="color"
+                    value={brandingColors.textSecondary}
+                    onChange={(e) => handleColorChange('textSecondary', e.target.value)}
+                    className="w-20 h-10 p-1 cursor-pointer"
+                  />
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      value={brandingColors.textSecondary}
+                      onChange={(e) => handleColorChange('textSecondary', e.target.value)}
+                      placeholder="#6b7280"
+                      className={unsavedChanges.has('textSecondary') ? "pr-16" : ""}
+                    />
+                    {unsavedChanges.has('textSecondary') && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleColorRevert('textSecondary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Revert changes"
+                        >
+                          <X className="h-4 w-4 text-red-500 hover:text-red-700" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleColorSave('textSecondary')}
+                          className="hover:bg-stone-100 rounded p-1 transition-colors"
+                          title="Save changes"
+                        >
+                          <Check className="h-4 w-4 text-green-500 hover:text-green-700" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Logos */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium">Logos</h3>
+            <p className="text-xs text-muted-foreground">
+              Upload logos or provide URLs. Logos are displayed on the public website header, footer, and as favicon.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <Label>Header Logo</Label>
+                <ImageUpload
+                  value={brandingLogos.header || ""}
+                  onChange={(url) => handleLogoUrlChange('header', url)}
+                  onUploadComplete={(url) => handleLogoUpload('header', url)}
+                  onDelete={() => handleLogoDelete('header')}
+                  bucket="logos"
+                  folder="branding/header"
+                  aspectRatio="video"
+                  maxSizeMB={2}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Footer Logo</Label>
+                <ImageUpload
+                  value={brandingLogos.footer || ""}
+                  onChange={(url) => handleLogoUrlChange('footer', url)}
+                  onUploadComplete={(url) => handleLogoUpload('footer', url)}
+                  onDelete={() => handleLogoDelete('footer')}
+                  bucket="logos"
+                  folder="branding/footer"
+                  aspectRatio="video"
+                  maxSizeMB={2}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Favicon</Label>
+                <ImageUpload
+                  value={brandingLogos.favicon || ""}
+                  onChange={(url) => handleLogoUrlChange('favicon', url)}
+                  onUploadComplete={(url) => handleLogoUpload('favicon', url)}
+                  onDelete={() => handleLogoDelete('favicon')}
+                  bucket="logos"
+                  folder="branding/favicon"
+                  aspectRatio="square"
+                  maxSizeMB={1}
+                />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
