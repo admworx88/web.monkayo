@@ -85,7 +85,7 @@ export function HeroSlidesTable({ slides }: HeroSlidesTableProps) {
       header: "Title",
       cell: ({ row }) => (
         <div className="min-w-0">
-          <p className="font-medium text-stone-900 truncate">
+          <p className="font-medium dark:text-stone-200 text-stone-800 truncate">
             {row.original.title || "Untitled"}
           </p>
           {row.original.subtitle && (

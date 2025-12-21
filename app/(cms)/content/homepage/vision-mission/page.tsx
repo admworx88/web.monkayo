@@ -95,9 +95,12 @@ export default function VisionMissionPage() {
                   <Target className="h-5 w-5 text-[amber-600]" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-stone-900">Vision</h3>
+                  <h3 className="font-semibold dark:text-stone-200 text-stone-800">
+                    Vision
+                  </h3>
                   <p className="text-sm text-stone-500">
-                    The aspirational description of what the municipality wants to achieve
+                    The aspirational description of what the municipality wants
+                    to achieve
                   </p>
                 </div>
               </div>
@@ -125,7 +128,9 @@ export default function VisionMissionPage() {
                   <Target className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-stone-900">Mission</h3>
+                  <h3 className="font-semibold dark:text-stone-200 text-stone-800">
+                    Mission
+                  </h3>
                   <p className="text-sm text-stone-500">
                     The purpose and actions taken to achieve the vision
                   </p>
@@ -155,7 +160,9 @@ export default function VisionMissionPage() {
                   <Target className="h-5 w-5 text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-stone-900">Goals</h3>
+                  <h3 className="font-semibold dark:text-stone-200 text-stone-800">
+                    Goals
+                  </h3>
                   <p className="text-sm text-stone-500">
                     Specific objectives the municipality aims to accomplish
                   </p>

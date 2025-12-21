@@ -203,7 +203,7 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
                         isActive={pathname === "/dashboard"}
                         className={cn(
                           "h-10 rounded-lg font-medium transition-all duration-200",
-                          "text-stone-600 hover:text-stone-900 hover:bg-stone-100",
+                          "dark:text-stone-200 text-stone-800 hover:text-stone-900 hover:bg-stone-100",
                           pathname === "/dashboard" &&
                             "bg-amber-600 text-white hover:bg-amber-600 hover:text-white shadow-sm"
                         )}
@@ -252,7 +252,7 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
                             <SidebarMenuButton
                               className={cn(
                                 "h-10 rounded-lg font-medium transition-all duration-200",
-                                "text-stone-600 hover:text-stone-900 hover:bg-stone-100",
+                                "dark:text-stone-200 text-stone-800 hover:text-stone-900 hover:bg-stone-100",
                                 isActive && "bg-stone-100 text-stone-900"
                               )}
                             >
@@ -270,7 +270,7 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
                         </TooltipContent>
                       </Tooltip>
                       <CollapsibleContent>
-                        <SidebarMenuSub className="ml-[22px] border-l border-stone-200 pl-3 mt-1">
+                        <SidebarMenuSub className="ml-[22px] border-l border-dashed dark:border-stone-200 border-stone-600 pl-3 mt-1">
                           {item.children?.map((child) => {
                             const ChildIcon = getIcon(child.icon);
                             const isChildActive =
@@ -283,7 +283,7 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
                                   isActive={!!isChildActive}
                                   className={cn(
                                     "h-9 rounded-md text-[13px] transition-all duration-200",
-                                    "text-stone-500 hover:text-stone-900 hover:bg-stone-50",
+                                    "dark:text-stone-300 text-stone-700 hover:text-stone-900 hover:bg-stone-50",
                                     isChildActive &&
                                       "text-amber-600 bg-amber-50/80 font-medium hover:bg-amber-50/80 hover:text-amber-600"
                                   )}
@@ -325,7 +325,7 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
                             isActive={!!isActive}
                             className={cn(
                               "h-10 rounded-lg font-medium transition-all duration-200",
-                              "text-stone-600 hover:text-stone-900 hover:bg-stone-100",
+                              "dark:text-stone-200 text-stone-800 hover:text-stone-900 hover:bg-stone-100",
                               isActive &&
                                 "bg-amber-600 text-white hover:bg-amber-600 hover:text-white shadow-sm"
                             )}

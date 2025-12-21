@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2, MapPin, Mail, Phone, Facebook, User } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  MapPin,
+  Mail,
+  Phone,
+  Facebook,
+  User,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { DataTable } from "@/components/cms/data-table";
@@ -29,7 +38,9 @@ interface BarangaysTableProps {
 
 export function BarangaysTable({ barangays }: BarangaysTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedBarangay, setSelectedBarangay] = useState<Barangay | null>(null);
+  const [selectedBarangay, setSelectedBarangay] = useState<Barangay | null>(
+    null
+  );
 
   const handleDelete = async () => {
     if (!selectedBarangay) return;
@@ -48,17 +59,19 @@ export function BarangaysTable({ barangays }: BarangaysTableProps) {
       header: "Barangay",
       cell: ({ row }) => (
         <div className="flex items-start gap-3 min-w-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600 flex-shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600 shrink-0">
             <MapPin className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-medium text-stone-900 truncate">
+            <p className="font-medium dark:text-stone-200 text-stone-800 truncate">
               {row.original.name}
             </p>
             {row.original.captain_name && (
-              <div className="flex items-center gap-1.5 text-sm text-stone-500 mt-0.5">
+              <div className="flex items-center gap-1.5 text-sm dark:text-stone-400 text-stone-500 mt-0.5">
                 <User className="h-3.5 w-3.5" />
-                <span className="truncate">Kap. {row.original.captain_name}</span>
+                <span className="truncate">
+                  Kap. {row.original.captain_name}
+                </span>
               </div>
             )}
           </div>
@@ -71,17 +84,20 @@ export function BarangaysTable({ barangays }: BarangaysTableProps) {
       cell: ({ row }) => (
         <div className="space-y-1">
           {row.original.email && (
-            <div className="flex items-center gap-1.5 text-sm text-stone-600">
+            <div className="flex items-center gap-1.5 text-sm dark:text-stone-400 text-stone-500">
               <Mail className="h-3.5 w-3.5" />
-              <span className="truncate max-w-[180px]">{row.original.email}</span>
+              <span className="truncate max-w-[180px]">
+                {row.original.email}
+              </span>
             </div>
           )}
-          {row.original.contact_numbers && row.original.contact_numbers.length > 0 && (
-            <div className="flex items-center gap-1.5 text-sm text-stone-600">
-              <Phone className="h-3.5 w-3.5" />
-              <span>{row.original.contact_numbers[0]}</span>
-            </div>
-          )}
+          {row.original.contact_numbers &&
+            row.original.contact_numbers.length > 0 && (
+              <div className="flex items-center gap-1.5 text-sm dark:text-stone-400 text-stone-500">
+                <Phone className="h-3.5 w-3.5" />
+                <span>{row.original.contact_numbers[0]}</span>
+              </div>
+            )}
         </div>
       ),
     },
@@ -90,7 +106,7 @@ export function BarangaysTable({ barangays }: BarangaysTableProps) {
       header: "Population",
       cell: ({ row }) =>
         row.original.population ? (
-          <span className="text-stone-700 font-medium tabular-nums">
+          <span className="dark:text-stone-200 text-stone-700 font-medium tabular-nums">
             {row.original.population.toLocaleString()}
           </span>
         ) : (

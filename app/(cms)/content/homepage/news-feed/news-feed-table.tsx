@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2, Rss, ExternalLink } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Rss,
+  ExternalLink,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { DataTable } from "@/components/cms/data-table";
@@ -58,11 +64,11 @@ export function NewsFeedTable({ news }: NewsFeedTableProps) {
       header: "News Item",
       cell: ({ row }) => (
         <div className="flex items-start gap-3 min-w-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-[amber-600] flex-shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-[amber-600] shrink-0">
             <Rss className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-medium text-stone-900 truncate">
+            <p className="font-medium dark:text-stone-200 text-stone-800 truncate">
               {row.original.title}
             </p>
             {row.original.facebook_embed_url && (

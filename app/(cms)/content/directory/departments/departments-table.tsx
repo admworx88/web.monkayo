@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2, Building2, Mail, Phone, Facebook } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Building2,
+  Mail,
+  Phone,
+  Facebook,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { DataTable } from "@/components/cms/data-table";
@@ -29,7 +37,8 @@ interface DepartmentsTableProps {
 
 export function DepartmentsTable({ departments }: DepartmentsTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
+  const [selectedDepartment, setSelectedDepartment] =
+    useState<Department | null>(null);
 
   const handleDelete = async () => {
     if (!selectedDepartment) return;
@@ -52,7 +61,7 @@ export function DepartmentsTable({ departments }: DepartmentsTableProps) {
             <Building2 className="h-5 w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-medium text-stone-900 truncate">
+            <p className="font-medium dark:text-stone-200 text-stone-800 truncate">
               {row.original.name}
             </p>
             {row.original.head_name && (
@@ -72,15 +81,18 @@ export function DepartmentsTable({ departments }: DepartmentsTableProps) {
           {row.original.email && (
             <div className="flex items-center gap-1.5 text-sm text-stone-600">
               <Mail className="h-3.5 w-3.5" />
-              <span className="truncate max-w-[180px]">{row.original.email}</span>
+              <span className="truncate max-w-[180px]">
+                {row.original.email}
+              </span>
             </div>
           )}
-          {row.original.contact_numbers && row.original.contact_numbers.length > 0 && (
-            <div className="flex items-center gap-1.5 text-sm text-stone-600">
-              <Phone className="h-3.5 w-3.5" />
-              <span>{row.original.contact_numbers[0]}</span>
-            </div>
-          )}
+          {row.original.contact_numbers &&
+            row.original.contact_numbers.length > 0 && (
+              <div className="flex items-center gap-1.5 text-sm text-stone-600">
+                <Phone className="h-3.5 w-3.5" />
+                <span>{row.original.contact_numbers[0]}</span>
+              </div>
+            )}
         </div>
       ),
     },

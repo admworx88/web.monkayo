@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
     contentDispositionType: "inline", // Allow images to be displayed inline
     unoptimized: false, // Enable Next.js image optimization
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
+  },
 };
 
 export default nextConfig;

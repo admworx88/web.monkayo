@@ -33,7 +33,9 @@ export function UsersTable({ users }: UsersTableProps) {
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     const result = await toggleUserStatus(userId, !currentStatus);
     if (result.success) {
-      toast.success(`User ${!currentStatus ? "activated" : "deactivated"} successfully`);
+      toast.success(
+        `User ${!currentStatus ? "activated" : "deactivated"} successfully`
+      );
     } else {
       toast.error(result.error || "Failed to update user status");
     }
@@ -70,7 +72,8 @@ export function UsersTable({ users }: UsersTableProps) {
       accessorKey: "email",
       header: "User",
       cell: ({ row }) => {
-        const initials = `${row.original.first_name[0]}${row.original.last_name[0]}`.toUpperCase();
+        const initials =
+          `${row.original.first_name[0]}${row.original.last_name[0]}`.toUpperCase();
         return (
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
@@ -78,7 +81,7 @@ export function UsersTable({ users }: UsersTableProps) {
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-slate-900 truncate">
+              <p className="font-medium dark:text-stone-200 text-slate-800 truncate">
                 {row.original.first_name} {row.original.last_name}
               </p>
               <p className="text-sm text-slate-500 truncate">
@@ -115,7 +118,8 @@ export function UsersTable({ users }: UsersTableProps) {
       header: "Last Login",
       cell: ({ row }) => {
         const lastLogin = row.original.last_login_at;
-        if (!lastLogin) return <span className="text-sm text-slate-400">Never</span>;
+        if (!lastLogin)
+          return <span className="text-sm text-slate-400">Never</span>;
 
         return (
           <div className="flex items-center gap-1.5 text-sm text-slate-500">
@@ -160,8 +164,15 @@ export function UsersTable({ users }: UsersTableProps) {
               </UserDialog>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className={row.original.is_active ? "text-orange-600" : "text-green-600"}
-                onSelect={() => handleToggleStatus(row.original.id, row.original.is_active || false)}
+                className={
+                  row.original.is_active ? "text-orange-600" : "text-green-600"
+                }
+                onSelect={() =>
+                  handleToggleStatus(
+                    row.original.id,
+                    row.original.is_active || false
+                  )
+                }
               >
                 <User className="h-4 w-4 mr-2" />
                 {row.original.is_active ? "Deactivate" : "Activate"}
@@ -183,7 +194,5 @@ export function UsersTable({ users }: UsersTableProps) {
     );
   }
 
-  return (
-    <DataTable columns={columns} data={users} searchKey="email" />
-  );
+  return <DataTable columns={columns} data={users} searchKey="email" />;
 }

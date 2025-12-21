@@ -130,7 +130,7 @@ export function HeroSlideDialog({
                 onUpload={handleImageUpload}
                 onDelete={handleImageDelete}
                 aspectRatio="video"
-                maxSizeMB={10}
+                maxSizeMB={5}
                 allowUrl={true}
               />
             </div>
