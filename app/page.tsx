@@ -28,9 +28,9 @@ export default async function HomePage() {
   return (
     <PublicLayout>
       <MinimalHero slides={heroSlides} />
-      <MinimalPartners logos={logos} />
-      <MinimalVisionMission data={visionMission} />
       <ModernNewsSection items={news} />
+      <MinimalVisionMission data={visionMission} />
+      <MinimalPartners logos={logos} />
       <QuickServices />
       <MinimalStats />
       <MinimalFAQ items={faqs} />

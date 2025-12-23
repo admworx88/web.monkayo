@@ -106,17 +106,25 @@ export function SettingsForm({ settings, branding }: SettingsFormProps) {
     });
   };
 
-  // Handle logo upload
-  const handleLogoUpload = async (logoType: keyof typeof brandingLogos, publicUrl: string) => {
-    setBrandingLogos({ ...brandingLogos, [logoType]: publicUrl });
-    toast.success(`${logoType} logo updated`);
-    router.refresh();
+  // Handle logo file upload
+  const handleLogoUpload = async (logoType: keyof typeof brandingLogos, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const result = await uploadBrandingLogo(formData, logoType);
+
+    if (result.success && result.publicUrl) {
+      setBrandingLogos({ ...brandingLogos, [logoType]: result.publicUrl });
+      toast.success(`${logoType} logo uploaded`);
+      router.refresh();
+    }
+
+    return result;
   };
 
   // Handle logo deletion
-  const handleLogoDelete = async (logoType: keyof typeof brandingLogos) => {
-    const logoUrl = brandingLogos[logoType];
-    if (!logoUrl) return;
+  const handleLogoDelete = async (logoType: keyof typeof brandingLogos, logoUrl: string) => {
+    if (!logoUrl) return { success: false, error: 'No logo to delete' };
 
     const result = await deleteBrandingLogo(logoUrl, logoType);
     if (result.success) {
@@ -126,6 +134,8 @@ export function SettingsForm({ settings, branding }: SettingsFormProps) {
     } else {
       toast.error(`Failed to remove ${logoType} logo`);
     }
+
+    return result;
   };
 
   // Handle logo URL input
@@ -558,10 +568,8 @@ export function SettingsForm({ settings, branding }: SettingsFormProps) {
                 <ImageUpload
                   value={brandingLogos.header || ""}
                   onChange={(url) => handleLogoUrlChange('header', url)}
-                  onUploadComplete={(url) => handleLogoUpload('header', url)}
-                  onDelete={() => handleLogoDelete('header')}
-                  bucket="logos"
-                  folder="branding/header"
+                  onUpload={(file) => handleLogoUpload('header', file)}
+                  onDelete={(url) => handleLogoDelete('header', url)}
                   aspectRatio="video"
                   maxSizeMB={2}
                 />
@@ -572,10 +580,8 @@ export function SettingsForm({ settings, branding }: SettingsFormProps) {
                 <ImageUpload
                   value={brandingLogos.footer || ""}
                   onChange={(url) => handleLogoUrlChange('footer', url)}
-                  onUploadComplete={(url) => handleLogoUpload('footer', url)}
-                  onDelete={() => handleLogoDelete('footer')}
-                  bucket="logos"
-                  folder="branding/footer"
+                  onUpload={(file) => handleLogoUpload('footer', file)}
+                  onDelete={(url) => handleLogoDelete('footer', url)}
                   aspectRatio="video"
                   maxSizeMB={2}
                 />
@@ -586,10 +592,8 @@ export function SettingsForm({ settings, branding }: SettingsFormProps) {
                 <ImageUpload
                   value={brandingLogos.favicon || ""}
                   onChange={(url) => handleLogoUrlChange('favicon', url)}
-                  onUploadComplete={(url) => handleLogoUpload('favicon', url)}
-                  onDelete={() => handleLogoDelete('favicon')}
-                  bucket="logos"
-                  folder="branding/favicon"
+                  onUpload={(file) => handleLogoUpload('favicon', file)}
+                  onDelete={(url) => handleLogoDelete('favicon', url)}
                   aspectRatio="square"
                   maxSizeMB={1}
                 />

@@ -1,6 +1,7 @@
 import { getBrandingSettings } from "@/lib/actions/branding";
 import { BrandingProvider } from "@/lib/context/branding-context";
 import { ThemeScript } from "@/components/branding/theme-script";
+import { PublicTopBar } from "./public-topbar";
 import { PublicHeader } from "./public-header";
 import { PublicFooter } from "./public-footer";
 
@@ -15,6 +16,7 @@ export async function PublicLayout({ children }: PublicLayoutProps) {
     <BrandingProvider branding={branding}>
       <ThemeScript branding={branding} />
       <div className="flex min-h-screen flex-col">
+        <PublicTopBar />
         <PublicHeader />
         <main className="flex-1">{children}</main>
         <PublicFooter />

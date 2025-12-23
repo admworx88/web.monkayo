@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface HeroSlide {
   id: string;
@@ -51,7 +51,7 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
 
   if (!slides || slides.length === 0) {
     return (
-      <section className="relative h-[500px] md:h-[600px] bg-gradient-to-r from-primary-600 to-primary-700 flex items-center justify-center">
+      <section className="relative h-[500px] md:h-[600px] bg-linear-to-r from-primary-600 to-primary-700 flex items-center justify-center">
         <div className="text-center text-white">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Welcome to LGU Monkayo
@@ -101,9 +101,7 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
                 className="bg-white text-primary-700 hover:bg-gray-100 shadow-lg text-lg px-8 py-6"
                 asChild
               >
-                <a href={currentSlide.link_url}>
-                  {currentSlide.link_text}
-                </a>
+                <a href={currentSlide.link_url}>{currentSlide.link_text}</a>
               </Button>
             </div>
           )}
@@ -139,10 +137,10 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
               key={index}
               onClick={() => goToSlide(index)}
               className={cn(
-                'w-3 h-3 rounded-full transition-all duration-300',
+                "w-3 h-3 rounded-full transition-all duration-300",
                 index === currentIndex
-                  ? 'bg-white w-8'
-                  : 'bg-white/50 hover:bg-white/75'
+                  ? "bg-white w-8"
+                  : "bg-white/50 hover:bg-white/75"
               )}
               aria-label={`Go to slide ${index + 1}`}
             />

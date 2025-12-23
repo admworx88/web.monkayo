@@ -7,6 +7,7 @@ import { Menu, X, ChevronDown, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useBranding } from "@/lib/context/branding-context";
+import { useScrollDirection } from "@/hooks/use-scroll-direction";
 
 interface NavItem {
   label: string;
@@ -76,16 +77,25 @@ export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { branding } = useBranding();
+  const { isVisible: isTopBarVisible } = useScrollDirection();
+
+  // TopBar height in pixels (h-12 on desktop = 48px)
+  const TOPBAR_HEIGHT = 44;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-stone-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
+    <header
+      className="sticky z-40 w-full border-b border-stone-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80 transition-[top] duration-300 ease-in-out"
+      style={{
+        top: isTopBarVisible ? `${TOPBAR_HEIGHT}px` : "0px",
+      }}
+    >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group">
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo - with z-60 to appear on top of topbar (topbar is z-50) */}
+          <div className="flex items-center gap-3 relative z-50">
+            <Link href="/" className="flex items-center gap-3 group z-50">
               {branding.logos.header ? (
-                <div className="relative h-10 w-32">
+                <div className="relative h-20 w-32 sm:h-28 sm:w-44 md:h-32 md:w-52 lg:h-36 lg:w-60 top-2 sm:top-3 md:top-4 lg:top-5">
                   <Image
                     src={branding.logos.header}
                     alt="LGU Monkayo"
@@ -129,12 +139,14 @@ export function PublicHeader() {
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
                   <button
-                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-stone-600 transition-colors rounded-md hover:bg-stone-50"
+                    className="flex items-center gap-1 px-3 py-2 text-base font-black tracking-wide text-stone-600 transition-colors rounded-md hover:bg-stone-50 uppercase"
                     style={{
                       color:
                         openDropdown === item.label
                           ? branding.colors.primary
                           : undefined,
+                      fontFamily: '"Bebas Neue", "Arial Black", sans-serif',
+                      letterSpacing: "0.5px",
                     }}
                   >
                     {item.label}
@@ -143,15 +155,18 @@ export function PublicHeader() {
 
                   {/* Dropdown Menu */}
                   {openDropdown === item.label && (
-                    <div className="absolute left-0 top-full mt-1 w-56 rounded-lg border border-stone-200 bg-white shadow-lg ring-1 ring-black/5 animate-in fade-in-0 slide-in-from-top-1">
+                    <div className="absolute left-0 top-full mt-1 w-64 rounded-lg border border-stone-200 bg-white shadow-lg ring-1 ring-black/5 animate-in fade-in-0 slide-in-from-top-1">
                       <div className="p-1">
                         {item.children.map((child) => (
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="block px-3 py-2 text-sm text-stone-700 rounded-md transition-colors hover:bg-opacity-10"
+                            className="block px-3 py-2.5 text-sm font-bold tracking-wide text-stone-700 rounded-md transition-colors hover:bg-opacity-10 uppercase"
                             style={{
                               ["--hover-bg" as string]: branding.colors.primary,
+                              fontFamily:
+                                '"Bebas Neue", "Arial Black", sans-serif',
+                              letterSpacing: "0.3px",
                             }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.backgroundColor = `${branding.colors.primary}1A`;
@@ -174,7 +189,11 @@ export function PublicHeader() {
                 <Link
                   key={item.label}
                   href={item.href!}
-                  className="px-3 py-2 text-sm font-medium text-stone-600 transition-colors rounded-md hover:bg-stone-50"
+                  className="px-3 py-2 text-base font-black tracking-wide text-stone-600 transition-colors rounded-md hover:bg-stone-50 uppercase"
+                  style={{
+                    fontFamily: '"Bebas Neue", "Arial Black", sans-serif',
+                    letterSpacing: "0.5px",
+                  }}
                 >
                   {item.label}
                 </Link>
@@ -228,12 +247,16 @@ export function PublicHeader() {
                 item.children ? (
                   <div key={item.label} className="space-y-1">
                     <button
-                      className="flex w-full items-center justify-between px-3 py-2 text-base font-medium text-stone-700 hover:bg-stone-50 rounded-md"
+                      className="flex w-full items-center justify-between px-3 py-2 text-lg font-black tracking-wide text-stone-700 hover:bg-stone-50 rounded-md uppercase"
                       onClick={() =>
                         setOpenDropdown(
                           openDropdown === item.label ? null : item.label
                         )
                       }
+                      style={{
+                        fontFamily: '"Bebas Neue", "Arial Black", sans-serif',
+                        letterSpacing: "0.5px",
+                      }}
                     >
                       {item.label}
                       <ChevronDown
@@ -249,8 +272,13 @@ export function PublicHeader() {
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="block px-3 py-2 text-sm text-stone-600 rounded-md transition-colors"
+                            className="block px-3 py-2 text-base font-bold tracking-wide text-stone-600 rounded-md transition-colors uppercase"
                             onClick={() => setMobileMenuOpen(false)}
+                            style={{
+                              fontFamily:
+                                '"Bebas Neue", "Arial Black", sans-serif',
+                              letterSpacing: "0.3px",
+                            }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.backgroundColor = `${branding.colors.primary}1A`;
                               e.currentTarget.style.color =
@@ -271,8 +299,12 @@ export function PublicHeader() {
                   <Link
                     key={item.label}
                     href={item.href!}
-                    className="block px-3 py-2 text-base font-medium text-stone-700 hover:bg-stone-50 rounded-md"
+                    className="block px-3 py-2 text-lg font-black tracking-wide text-stone-700 hover:bg-stone-50 rounded-md uppercase"
                     onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      fontFamily: '"Bebas Neue", "Arial Black", sans-serif',
+                      letterSpacing: "0.5px",
+                    }}
                   >
                     {item.label}
                   </Link>
@@ -298,6 +330,11 @@ export function PublicHeader() {
           </div>
         )}
       </nav>
+
+      {/* Font Import for Navigation */}
+      <style jsx global>{`
+        @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+      `}</style>
     </header>
   );
 }
