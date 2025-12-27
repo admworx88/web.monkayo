@@ -1,0 +1,206 @@
+/* ============================================= */
+/* ELECTED OFFICIALS ORG CHART - MODERN STYLES */
+/* Contemporary Editorial Aesthetic             */
+/* ============================================= */
+
+/* Google Fonts Import - Contemporary Editorial Typography */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* Keyframe Animations */
+@keyframes officialFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    filter: blur(8px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(12px);
+  }
+}
+
+/* Line Animations */
+@keyframes lineDrawIn {
+  from { stroke-dashoffset: var(--line-length); }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes lineDrawInMobile {
+  from { height: 0; }
+  to { height: var(--target-height); }
+}
+
+@keyframes lineFlow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 20; }
+}
+
+@keyframes linePulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.85; }
+}
+
+/* Official Card Container */
+.official-card-container {
+  animation: officialFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Official Card Base Styles - Modern Clean Design */
+.official-card {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+  position: relative;
+}
+
+.official-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+
+/* Portrait Modern Styles - Circular Design */
+.portrait-modern {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.official-card:hover .portrait-modern {
+  transform: scale(1.03);
+}
+
+/* Modern Image Hover Effect */
+.portrait-modern img {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.official-card:hover .portrait-modern img {
+  transform: scale(1.05);
+}
+
+/* Line Animation Classes */
+.animate-line-draw-in {
+  stroke-dasharray: var(--line-length);
+  stroke-dashoffset: var(--line-length);
+  animation: lineDrawIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-line-flow {
+  stroke-dasharray: 10 10;
+  animation:
+    lineFlow 3s linear infinite,
+    linePulse 2s ease-in-out infinite;
+}
+
+.animate-line-draw-in-mobile {
+  height: 0;
+  animation: lineDrawInMobile 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.line-glow-active {
+  stroke-width: 4 !important;
+  opacity: 1 !important;
+}
+
+line {
+  transition: stroke-width 0.5s, opacity 0.5s, filter 0.5s;
+  will-change: stroke-dashoffset, opacity, filter;
+}
+
+/* Ensure fonts are loaded */
+body {
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern Typography Classes */
+.official-card h3 {
+  font-optical-sizing: auto;
+}
+
+/* Smooth Transitions for All Text */
+.official-card h3,
+.official-card p {
+  transition: color 0.3s ease;
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .official-card-container,
+  .official-card,
+  .portrait-modern,
+  .portrait-modern img,
+  .animate-line-draw-in,
+  .animate-line-flow,
+  .animate-line-draw-in-mobile {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  line {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .animate-line-draw-in-mobile {
+    height: var(--target-height) !important;
+  }
+
+  .official-card:hover {
+    transform: none;
+  }
+
+  .official-card:hover .portrait-modern {
+    transform: none;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .official-card {
+    padding: 32px 24px !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .official-card {
+    background: white !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .official-card::before,
+  .official-card::after {
+    display: none !important;
+  }
+}

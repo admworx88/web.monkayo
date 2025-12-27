@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Trash2, Users, Calendar } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Users,
+  Calendar,
+  ImageIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { DataTable } from "@/components/cms/data-table";
@@ -18,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteElectedOfficial } from "@/lib/actions/about";
 import { OfficialDialog } from "./official-dialog";
+import { BackgroundsDialog } from "./backgrounds-dialog";
 import type { Database } from "@/types/supabase";
 
 type ElectedOfficial = Database["public"]["Tables"]["elected_officials"]["Row"];
@@ -28,7 +37,8 @@ interface OfficialsTableProps {
 
 export function OfficialsTable({ officials }: OfficialsTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedOfficial, setSelectedOfficial] = useState<ElectedOfficial | null>(null);
+  const [selectedOfficial, setSelectedOfficial] =
+    useState<ElectedOfficial | null>(null);
 
   const handleDelete = async () => {
     if (!selectedOfficial) return;
@@ -47,11 +57,24 @@ export function OfficialsTable({ officials }: OfficialsTableProps) {
       header: "Name & Title",
       cell: ({ row }) => (
         <div className="flex items-start gap-3 min-w-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 flex-shrink-0">
-            <Users className="h-5 w-5" />
+          <div className="relative h-10 w-10 rounded-lg overflow-hidden shrink-0 bg-indigo-50">
+            {row.original.picture_url ? (
+              <Image
+                src={row.original.picture_url}
+                alt={row.original.name}
+                fill
+                className="object-cover"
+                sizes="40px"
+                unoptimized
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-indigo-600">
+                <Users className="h-5 w-5" />
+              </div>
+            )}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-medium text-stone-900 truncate">
+            <p className="font-medium dark:text-stone-200 text-stone-800 truncate">
               {row.original.name}
             </p>
             {row.original.title && (
@@ -69,7 +92,9 @@ export function OfficialsTable({ officials }: OfficialsTableProps) {
       cell: ({ row }) => (
         <div className="text-sm text-stone-600">
           {row.original.term_start && row.original.term_end
-            ? `${new Date(row.original.term_start).getFullYear()} - ${new Date(row.original.term_end).getFullYear()}`
+            ? `${new Date(row.original.term_start).getFullYear()} - ${new Date(
+                row.original.term_end
+              ).getFullYear()}`
             : "—"}
         </div>
       ),
@@ -134,6 +159,17 @@ export function OfficialsTable({ officials }: OfficialsTableProps) {
                   Edit
                 </DropdownMenuItem>
               </OfficialDialog>
+
+              <BackgroundsDialog
+                officialId={row.original.id}
+                officialName={row.original.name}
+              >
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <ImageIcon className="h-4 w-4 mr-2" />
+                  Manage Backgrounds
+                </DropdownMenuItem>
+              </BackgroundsDialog>
+
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-600"

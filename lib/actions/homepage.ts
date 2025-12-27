@@ -24,6 +24,10 @@ type LogoSectionUpdate = Database["public"]["Tables"]["logo_section"]["Update"];
 type VisionMission = Database["public"]["Tables"]["vision_mission"]["Row"];
 type VisionMissionUpdate = Database["public"]["Tables"]["vision_mission"]["Update"];
 
+type FlagshipProgram = Database["public"]["Tables"]["flagship_programs"]["Row"];
+type FlagshipProgramInsert = Database["public"]["Tables"]["flagship_programs"]["Insert"];
+type FlagshipProgramUpdate = Database["public"]["Tables"]["flagship_programs"]["Update"];
+
 // ============================================
 // HERO SLIDES
 // ============================================
@@ -665,6 +669,188 @@ export async function deletePartnerLogo(
   }
 
   revalidatePath("/content/homepage/logos");
+  revalidatePath("/");
+  return { success: true };
+}
+
+// ============================================
+// FLAGSHIP PROGRAMS
+// ============================================
+
+/**
+ * Fetch active flagship programs ordered by sort_order
+ */
+export async function getFlagshipPrograms() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("flagship_programs")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching flagship programs:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Fetch all flagship programs (including inactive) for admin
+ */
+export async function getAllFlagshipPrograms(): Promise<FlagshipProgram[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("flagship_programs")
+    .select("*")
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching all flagship programs:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Create a new flagship program
+ */
+export async function createFlagshipProgram(
+  program: Omit<FlagshipProgramInsert, "id" | "created_at" | "updated_at">
+): Promise<{ success: boolean; error?: string; data?: FlagshipProgram }> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("flagship_programs")
+    .insert(program)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating flagship program:", error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath("/content/homepage/flagship");
+  revalidatePath("/");
+  return { success: true, data };
+}
+
+/**
+ * Update a flagship program
+ */
+export async function updateFlagshipProgram(
+  id: string,
+  updates: FlagshipProgramUpdate
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("flagship_programs")
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error updating flagship program:", error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath("/content/homepage/flagship");
+  revalidatePath("/");
+  return { success: true };
+}
+
+/**
+ * Upload flagship program image to storage
+ */
+export async function uploadFlagshipProgramImage(
+  formData: FormData
+): Promise<{ success: boolean; publicUrl?: string; error?: string }> {
+  try {
+    const file = formData.get('file') as File;
+
+    if (!file) {
+      return { success: false, error: 'No file provided' };
+    }
+
+    // Upload to flagship-programs bucket in programs folder
+    const result = await uploadToStorage(file, 'flagship-programs', 'programs');
+
+    if (!result.success) {
+      return { success: false, error: result.error };
+    }
+
+    return {
+      success: true,
+      publicUrl: result.publicUrl,
+    };
+  } catch (error) {
+    console.error('Error uploading flagship program image:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Upload failed',
+    };
+  }
+}
+
+/**
+ * Delete flagship program image from storage
+ */
+export async function deleteFlagshipProgramImage(
+  imageUrl: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const path = await extractStoragePath(imageUrl);
+
+    if (!path) {
+      // External URL or invalid URL - just return success
+      return { success: true };
+    }
+
+    const result = await deleteFromStorage('flagship-programs', path);
+    return result;
+  } catch (error) {
+    console.error('Error deleting flagship program image:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Delete failed',
+    };
+  }
+}
+
+/**
+ * Delete flagship program
+ */
+export async function deleteFlagshipProgram(
+  id: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  // Fetch program first to get image URL for cleanup
+  const { data: program } = await supabase
+    .from("flagship_programs")
+    .select("image_url")
+    .eq("id", id)
+    .single();
+
+  // Delete record
+  const { error } = await supabase.from("flagship_programs").delete().eq("id", id);
+
+  if (error) {
+    console.error("Error deleting flagship program:", error);
+    return { success: false, error: error.message };
+  }
+
+  // Cleanup associated storage if exists (non-blocking)
+  if (program?.image_url) {
+    await deleteFlagshipProgramImage(program.image_url);
+  }
+
+  revalidatePath("/content/homepage/flagship");
   revalidatePath("/");
   return { success: true };
 }

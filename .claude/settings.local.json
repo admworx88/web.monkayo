@@ -41,7 +41,11 @@
       "Bash(yes:*)",
       "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm run db:push:*)",
+      "Bash(docker exec:*)",
+      "Skill(frontend-design)",
+      "Skill(frontend-design:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

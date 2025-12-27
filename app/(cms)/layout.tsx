@@ -3,16 +3,18 @@ import { AppSidebar } from "@/app/(cms)/dashboard/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getAdminSidebar } from "@/lib/actions/menus";
 import { getCurrentUser } from "@/lib/actions/admin";
+import { getBrandingSettings } from "@/lib/actions/branding";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Fetch user and menu data in parallel
-  const [user, menuItems] = await Promise.all([
+  // Fetch user, menu data, and branding in parallel
+  const [user, menuItems, branding] = await Promise.all([
     getCurrentUser(),
     getAdminSidebar(),
+    getBrandingSettings(),
   ]);
 
   // Redirect to login if not authenticated
@@ -34,7 +36,7 @@ export default async function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar menuItems={menuItems} user={user} />
+      <AppSidebar menuItems={menuItems} user={user} logoUrl={branding.logos.header} />
       <SidebarInset className="bg-stone-50/50 dark:bg-stone-950">
         <div className="flex flex-1 flex-col">{children}</div>
       </SidebarInset>

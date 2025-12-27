@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: false, // Security: Disable SVG
     contentDispositionType: "inline", // Allow images to be displayed inline
     unoptimized: false, // Enable Next.js image optimization
+    qualities: [25, 50, 75, 100],
   },
   experimental: {
     serverActions: {

@@ -48,6 +48,8 @@ const ALLOWED_LOGO_TYPES = [
 const MAX_FILE_SIZE = {
   "hero-slides": 10 * 1024 * 1024, // 10MB
   logos: 5 * 1024 * 1024, // 5MB
+  officials: 5 * 1024 * 1024, // 5MB
+  "flagship-programs": 10 * 1024 * 1024, // 10MB
 } as const;
 
 /**
@@ -55,7 +57,7 @@ const MAX_FILE_SIZE = {
  */
 export async function validateImageFile(
   file: File,
-  bucket: "hero-slides" | "logos"
+  bucket: "hero-slides" | "logos" | "officials" | "flagship-programs"
 ): Promise<ValidationResult> {
   // Check file size
   const maxSize = MAX_FILE_SIZE[bucket];
@@ -101,7 +103,7 @@ function generateUniqueFilename(originalFilename: string): string {
  */
 export async function uploadToStorage(
   file: File,
-  bucket: "hero-slides" | "logos",
+  bucket: "hero-slides" | "logos" | "officials" | "flagship-programs",
   folder?: string
 ): Promise<UploadResult> {
   const supabase = await createClient();
@@ -162,7 +164,7 @@ export async function uploadToStorage(
  * Delete file from storage bucket
  */
 export async function deleteFromStorage(
-  bucket: "hero-slides" | "logos",
+  bucket: "hero-slides" | "logos" | "officials" | "flagship-programs",
   path: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();

@@ -126,9 +126,15 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     avatar_url: string | null;
     role: "client" | "staff" | "admin";
   } | null;
+  logoUrl?: string | null;
 }
 
-export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
+export function AppSidebar({
+  menuItems,
+  user,
+  logoUrl,
+  ...props
+}: AppSidebarProps) {
   const pathname = usePathname();
 
   // Separate items by type
@@ -173,11 +179,26 @@ export function AppSidebar({ menuItems, user, ...props }: AppSidebarProps) {
             href="/dashboard"
             className="flex items-center gap-3 group group-data-[collapsible=icon]:justify-center"
           >
-            {/* Municipal Seal */}
+            {/* Municipal Seal / Logo */}
             <div className="relative shrink-0">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-600 to-amber-700 shadow-sm ring-1 ring-stone-200/50 transition-shadow group-hover:shadow-md">
-                <span className="text-amber-100 font-bold text-base">M</span>
-              </div>
+              {logoUrl ? (
+                <div className="h-14 w-14 rounded-xl overflow-hidden">
+                  <Image
+                    src={logoUrl}
+                    alt="LGU Monkayo"
+                    width={50}
+                    height={50}
+                    className="h-full w-full object-cover"
+                    quality={80}
+                    loading="lazy"
+                    unoptimized
+                  />
+                </div>
+              ) : (
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-amber-600 to-amber-700 shadow-sm ring-1 ring-stone-200/50 transition-shadow group-hover:shadow-md">
+                  <span className="text-amber-100 font-bold text-base">M</span>
+                </div>
+              )}
             </div>
             <div className="flex flex-col group-data-[collapsible=icon]:hidden">
               <h1 className="font-semibold text-[15px] text-stone-900 dark:text-slate-200 tracking-tight leading-tight">

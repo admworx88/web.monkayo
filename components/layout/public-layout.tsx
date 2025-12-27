@@ -15,7 +15,7 @@ export async function PublicLayout({ children }: PublicLayoutProps) {
   return (
     <BrandingProvider branding={branding}>
       <ThemeScript branding={branding} />
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col" style={{ background: "#fafaf9" }}>
         <PublicTopBar />
         <PublicHeader />
         <main className="flex-1">{children}</main>

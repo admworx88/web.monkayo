@@ -579,6 +579,53 @@ export type Database = {
           },
         ]
       }
+      elected_officials_bg: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          id: string
+          image_url: string
+          is_featured: boolean | null
+          link_url: string | null
+          official_id: string
+          sort_order: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_url: string
+          is_featured?: boolean | null
+          link_url?: string | null
+          official_id: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          is_featured?: boolean | null
+          link_url?: string | null
+          official_id?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "elected_officials_bg_official_id_fkey"
+            columns: ["official_id"]
+            isOneToOne: false
+            referencedRelation: "elected_officials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eservices: {
         Row: {
           category: Database["public"]["Enums"]["eservice_category"]
@@ -666,6 +713,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "faqs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flagship_programs: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          image_url: string
+          is_active: boolean | null
+          link_url: string | null
+          sort_order: number | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          link_url?: string | null
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          link_url?: string | null
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flagship_programs_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"

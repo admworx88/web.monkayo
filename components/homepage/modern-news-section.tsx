@@ -4,6 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { useBranding } from "@/lib/context/branding-context";
+import { Bebas_Neue } from "next/font/google";
+
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 interface NewsItem {
   id: string;
@@ -186,10 +193,10 @@ export function ModernNewsSection({ items }: ModernNewsSectionProps) {
                         background: `linear-gradient(135deg, ${branding.colors.primary} 0%, ${branding.colors.accent} 100%)`,
                       }}
                     >
-                      <span className="text-2xl font-black text-white leading-none" style={{ fontFamily: '"Bebas Neue", "Arial Black", sans-serif' }}>
+                      <span className={`text-2xl font-black text-white leading-none ${bebasNeue.className}`}>
                         {new Date(item.created_at).getDate()}
                       </span>
-                      <span className="text-[9px] font-bold text-white uppercase tracking-wider leading-none mt-0.5" style={{ fontFamily: '"Bebas Neue", "Arial Black", sans-serif' }}>
+                      <span className={`text-[9px] font-bold text-white uppercase tracking-wider leading-none mt-0.5 ${bebasNeue.className}`}>
                         {new Date(item.created_at).toLocaleDateString("en-US", { month: "short" })}
                       </span>
                     </div>
@@ -199,10 +206,9 @@ export function ModernNewsSection({ items }: ModernNewsSectionProps) {
                   <div className="flex-1 pt-8">
                     {/* Title */}
                     <h3
-                      className="text-2xl sm:text-3xl font-black mb-6 leading-tight line-clamp-3 transition-colors duration-500"
+                      className={`text-2xl sm:text-3xl font-black mb-6 leading-tight line-clamp-3 transition-colors duration-500 ${bebasNeue.className}`}
                       style={{
                         color: branding.colors.textPrimary,
-                        fontFamily: '"Bebas Neue", "Arial Black", sans-serif',
                         letterSpacing: '0.02em',
                       }}
                     >
@@ -228,11 +234,10 @@ export function ModernNewsSection({ items }: ModernNewsSectionProps) {
                       href={item.facebook_embed_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-3 px-8 py-5 rounded-2xl font-black text-lg uppercase tracking-wider transition-all duration-500 group/link overflow-hidden relative shadow-lg w-full"
+                      className={`inline-flex items-center justify-center gap-3 px-8 py-5 rounded-2xl font-black text-lg uppercase tracking-wider transition-all duration-500 group/link overflow-hidden relative shadow-lg w-full ${bebasNeue.className}`}
                       style={{
                         backgroundColor: `${branding.colors.primary}`,
                         color: 'white',
-                        fontFamily: '"Bebas Neue", "Arial Black", sans-serif',
                         letterSpacing: '0.1em',
                       }}
                       onMouseEnter={(e) => {
@@ -292,8 +297,6 @@ export function ModernNewsSection({ items }: ModernNewsSectionProps) {
 
       {/* Card Animations */}
       <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
-
         @keyframes newsCardFadeIn {
           from {
             opacity: 0;
